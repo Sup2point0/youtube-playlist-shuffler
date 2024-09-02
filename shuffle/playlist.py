@@ -1,29 +1,69 @@
+import json
 import random
+from pathlib import Path
 
 
 class Playlist:
   '''Represents a YouTube playlist.'''
 
-  def __init__(self, yt, id):
+  def __init__(self, yt, id: str):
     self.yt = yt
     self.id = id
 
     self.videos = None
   
+
   def fetch(self):
     '''Fetch the videos in the playlist through the YouTube API and store them in `.videos`.'''
 
-    request = self.yt.playlistItems().list(
-      part = "snippet",
-      playlistId = self.id,
-    )
+    self.videos = []
+    init = True
 
-    response = request.execute()
-    self.videos = response["items"]
+    while True:
+      if init:
+        request = self.yt.playlistItems().list(
+          part = "snippet",
+          playlistId = self.id,
+          maxResults = 50,
+        )
+        init = False
 
-  def shuffle(self, freeze_start = None, freeze_end = None):
+      else:
+        request = self.yt.playlistItems().list(
+          part = "snippet",
+          playlistId = self.id,
+          maxResults = 50,
+          pageToken = page,
+        )
+
+      response = request.execute()
+      self.videos.extend(response["items"])
+
+      if "nextPageToken" in response:
+        page = response["nextPageToken"]
+      else:
+        return
+      
+
+  def save(self, out: str | Path):
+    '''Save the videos in the playlist to a JSON file.'''
+
+    if self.videos is None:
+      raise ValueError("Playlist videos have not been fetched yet, make sure to call .fetch()")
+    
+    with open(out, "w") as dest:
+      json.dump(self.videos, dest, indent = 2)
+
+
+  def shuffle(self,
+    freeze_start: int = None,
+    freeze_end: int = None,
+  ):
     '''Shuffle the videos in the playlist, keeping videos at the start and/or end frozen if specified.'''
 
+    if self.videos is None:
+      raise ValueError("Playlist videos have not been fetched yet, make sure to call .fetch()")
+    
     if freeze_start and freeze_start > len(self.videos):
       raise ValueError(f"Trying to freeze {freeze_start} videos when playlist is {len(self.videos)} long")
     
@@ -35,7 +75,8 @@ class Playlist:
     
     self.videos = start + dynamic + end
 
-  def save(self):
+
+  def update(self):
     '''Update the shuffled playlist through the YouTube API.'''
 
     for i, video in enumerate(self.videos):
@@ -55,3 +96,8 @@ class Playlist:
       )
 
       request.execute()
+      print(f''' / re-indexed [{
+        video['snippet']['position'] + 1
+      }] -> [{
+        i + 1
+      }] - {video['snippet']['title']}''')
