@@ -1,11 +1,13 @@
 [project]
-name = "YouTube Playlist Shuffler"
-description = "Automatically shuffle YouTube playlists through the Google YouTube Data API"
+name = "youtube-playlist-shuffler"
+description = "Automatically shuffle YouTube playlists through the YouTube Data API"
 readme = "README.md"
 authors = [{name = "Sup#2.0"}]
 license = {file = "LICENSE"}
 requires-python = ">= 3.12"
 dependencies = [
+  "google-api-python-client",
+  "google-auth-oauthlib"
 ]
 
 [project.urls]
