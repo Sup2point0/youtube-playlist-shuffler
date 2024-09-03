@@ -7,6 +7,8 @@ authors = [{name = "Sup#2.0"}]
 license = {file = "LICENSE"}
 requires-python = ">= 3.12"
 dependencies = [
+  "google-api-python-client",
+  "google-auth-oauthlib"
 ]
 
 [project.urls]
