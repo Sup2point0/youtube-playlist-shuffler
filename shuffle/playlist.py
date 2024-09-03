@@ -95,9 +95,16 @@ class Playlist:
         },
       )
 
-      request.execute()
-      print(f''' / re-indexed [{
-        video['snippet']['position'] + 1
-      }] -> [{
-        i + 1
-      }] - {video['snippet']['title']}''')
+      try:
+        request.execute()
+
+      except Exception as e:
+        print(" / failure!")
+        print(e)
+
+      else:
+        print(f''' / re-indexed [{
+          video['snippet']['position'] + 1
+        }] -> [{
+          i + 1
+        }] -- {video['snippet']['title']}''')
