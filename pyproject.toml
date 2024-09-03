@@ -1,5 +1,6 @@
 [project]
 name = "YouTube Playlist Shuffler"
+version = "1.0.0"
 description = "Automatically shuffle YouTube playlists through the Google YouTube Data API"
 readme = "README.md"
 authors = [{name = "Sup#2.0"}]
