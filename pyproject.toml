@@ -1,5 +1,5 @@
 [project]
-name = "YouTube Playlist Shuffler"
+name = "youtube-playlist-shuffler"
 version = "1.0.0"
 description = "Automatically shuffle YouTube playlists through the Google YouTube Data API"
 readme = "README.md"
