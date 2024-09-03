@@ -2,31 +2,33 @@ print(">> running!")
 
 import json
 
-from config import ROOT, SCRIPT
+from config import ROOT
 from auth import authorise
 from playlist import Playlist
 
 
+PLAYLIST = "Favourites / NCS"
+
+
+## auth
 yt = authorise()
 print(" / authorised!")
 
-with open(SCRIPT / "playlists.json") as source:
+## load
+with open(ROOT / "data" / "playlists.json") as source:
   playlists = json.load(source)
 
+playlist = playlists[PLAYLIST]
 
-p = Playlist(yt, playlists["Maximum Rhythm"])
+## shuffle
+p = Playlist(yt, playlist["id"])
 p.fetch()
-p.save(ROOT / "data" / "Maximum Rhythm.json")
+p.save(ROOT / "data" / "playlists" / f"{PLAYLIST.replace("/", "-")}.json")
 
-print("BEFORE =", len(p.videos))
-for video in p.videos[:9]:
-  print(video['snippet']['title'])
-
-p.shuffle(freeze_start = 3)
-
-print("AFTER =", len(p.videos))
-for video in p.videos[:9]:
-  print(video['snippet']['title'])
+p.shuffle(
+  freeze_start = playlist.get("freeze-start", None),
+  freeze_end = playlist.get("freeze-end", None),
+)
 p.update()
 
 print(">> done!")
