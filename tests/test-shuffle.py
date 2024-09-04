@@ -19,5 +19,11 @@ def test_shuffle_with_freeze():
 
   p.videos = list(range(10))
   p.shuffle(freeze_end = 2)
-  assert p.videos[:7] != [0, 1, 2, 3, 4, 5, 6, 7]
   assert p.videos[-2:] == [8, 9]
+  assert p.videos[:7] != [0, 1, 2, 3, 4, 5, 6, 7]
+
+  p.videos = list(range(10))
+  p.shuffle(freeze_start = 2, freeze_end = 2)
+  assert p.videos[:2] == [0, 1]
+  assert p.videos[-2:] == [8, 9]
+  assert p.videos[2:-2] != [2, 3, 4, 5, 6, 7]

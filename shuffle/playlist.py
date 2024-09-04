@@ -68,7 +68,7 @@ class Playlist:
       raise ValueError(f"Trying to freeze {freeze_start} videos when playlist is {len(self.videos)} long")
     
     start = self.videos[:freeze_start] if freeze_start else []
-    end = self.videos[freeze_end:] if freeze_end else []
+    end = self.videos[-freeze_end:] if freeze_end else []
     
     dynamic = self.videos[freeze_start:freeze_end]
     random.shuffle(dynamic)

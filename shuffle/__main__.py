@@ -7,7 +7,7 @@ from auth import authorise
 from playlist import Playlist
 
 
-PLAYLIST = "Favourites / NCS"
+PLAYLIST = "Favourites / Johannes Bornlof"
 
 
 ## auth
