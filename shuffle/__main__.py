@@ -7,9 +7,6 @@ from auth import authorise
 from playlist import Playlist
 
 
-PLAYLIST = "Favourites / Johannes Bornlof"
-
-
 ## auth
 yt = authorise()
 print(" / authorised!")
@@ -18,12 +15,13 @@ print(" / authorised!")
 with open(ROOT / "data" / "playlists.json") as source:
   playlists = json.load(source)
 
-playlist = playlists[PLAYLIST]
+choice = playlists["choice"]
+playlist = playlists[choice]
 
 ## shuffle
 p = Playlist(yt, playlist["id"])
 p.fetch()
-p.save(ROOT / "data" / "playlists" / f"{PLAYLIST.replace("/", "-")}.json")
+p.save(ROOT / "data" / "playlists" / f"{choice.replace("/", "-")}.json")
 
 p.shuffle(
   freeze_start = playlist.get("freeze-start", None),
