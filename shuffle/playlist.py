@@ -11,6 +11,12 @@ class Playlist:
     self.id = id
 
     self.videos = None
+    self.videos_prev = None
+
+
+  def _check_videos_(self):
+    if self.videos is None:
+      raise ValueError("Playlist videos have not been fetched yet, make sure to call .fetch()")
   
 
   def fetch(self):
@@ -48,8 +54,7 @@ class Playlist:
   def save(self, out: str | Path):
     '''Save the videos in the playlist to a JSON file.'''
 
-    if self.videos is None:
-      raise ValueError("Playlist videos have not been fetched yet, make sure to call .fetch()")
+    self._check_videos_()
     
     with open(out, "w") as dest:
       json.dump(self.videos, dest, indent = 2)
@@ -61,8 +66,7 @@ class Playlist:
   ):
     '''Shuffle the videos in the playlist, keeping videos at the start and/or end frozen if specified.'''
 
-    if self.videos is None:
-      raise ValueError("Playlist videos have not been fetched yet, make sure to call .fetch()")
+    self._check_videos_()
     
     if freeze_start and freeze_start > len(self.videos):
       raise ValueError(f"Trying to freeze {freeze_start} videos when playlist is {len(self.videos)} long")
@@ -73,11 +77,31 @@ class Playlist:
     dynamic = self.videos[freeze_start:(-freeze_end if freeze_end else None)]
     random.shuffle(dynamic)
     
+    self.videos_prev = self.videos.copy()
     self.videos = start + dynamic + end
+
+
+  def check(self):
+    '''Check if videos have been lost or duplicated during shuffling.'''
+
+    self._check_videos_()
+
+    current = {video["snippet"]["title"] for video in self.videos}
+    previous = {video["snippet"]["title"] for video in self.videos_prev}
+
+    if current != previous:
+      print(" / warning: videos were lost during shuffling")
+      print(current.difference(previous))
+    elif len(self.videos) != len(self.videos_prev):
+      print(" / warning: videos were duplicated during shuffling")
+    else:
+      print(" / checks complete, no issues found!")
 
 
   def update(self):
     '''Update the shuffled playlist through the YouTube API.'''
+
+    self._check_videos_()
 
     for i, video in enumerate(self.videos):
       request = self.yt.playlistItems().update(

@@ -27,6 +27,7 @@ p.shuffle(
   freeze_start = playlist.get("freeze-start", None),
   freeze_end = playlist.get("freeze-end", None),
 )
+p.check()
 p.update()
 
 print(">> done!")
