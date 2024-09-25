@@ -81,18 +81,30 @@ class Playlist:
     self.videos = start + dynamic + end
 
 
-  def check(self):
+  def pre_check(self):
+    '''Check if playlist contains duplicate videos.'''
+
+    self._check_videos_()
+
+    videos = [video["snippet"]["title"] for video in self.videos]
+    unique_videos = set(videos)
+    
+    if len(videos) != len(unique_videos):
+      print(" / warning: playlist contains duplicate videos")
+  
+
+  def post_check(self):
     '''Check if videos have been lost or duplicated during shuffling.'''
 
     self._check_videos_()
 
-    current = {video["snippet"]["title"] for video in self.videos}
-    previous = {video["snippet"]["title"] for video in self.videos_prev}
+    current = sorted(video["snippet"]["title"] for video in self.videos)
+    previous = sorted(video["snippet"]["title"] for video in self.videos_prev)
 
-    if current != previous:
+    if set(current) != set(previous):
       print(" / warning: videos were lost during shuffling")
       print(current.difference(previous))
-    elif len(self.videos) != len(self.videos_prev):
+    elif len(current) != len(previous):
       print(" / warning: videos were duplicated during shuffling")
     else:
       print(" / checks complete, no issues found!")

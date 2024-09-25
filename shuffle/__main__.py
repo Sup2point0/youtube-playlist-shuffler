@@ -22,12 +22,13 @@ playlist = playlists[choice]
 p = Playlist(yt, playlist["id"])
 p.fetch()
 p.save(ROOT / "data" / "playlists" / f"{choice.replace("/", "-")}.json")
+p.pre_check()
 
 p.shuffle(
   freeze_start = playlist.get("freeze-start", None),
   freeze_end = playlist.get("freeze-end", None),
 )
-p.check()
+p.post_check()
 p.update()
 
 print(">> done!")
